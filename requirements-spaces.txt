@@ -1,0 +1,14 @@
+# Requirements for Hugging Face Spaces deployment.
+# When deploying to HF Spaces, rename this file to requirements.txt
+# (replacing the desktop app's requirements.txt).
+numpy>=1.23.5,<2
+typing-extensions>=4.8.0
+opencv-python-headless==4.10.0.84
+onnx==1.18.0
+insightface==0.7.3
+psutil==5.9.8
+pillow==12.1.1
+tqdm>=4.65.0
+onnxruntime-gpu==1.23.2
+gradio>=5.0.0
+protobuf==4.25.1
