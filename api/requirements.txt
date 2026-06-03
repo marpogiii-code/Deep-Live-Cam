@@ -1,0 +1,3 @@
+# Lightweight dependencies for Vercel serverless functions.
+# The root requirements.txt contains heavy ML deps (tensorflow, onnxruntime)
+# that are not needed for the web API layer.

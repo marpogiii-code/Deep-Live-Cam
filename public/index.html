@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deep-Live-Cam — Real-Time Face Swap</title>
+    <meta name="description" content="Real-time face swap and video deepfake with a single click and only a single image." />
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent-hover: #79c0ff;
+            --green: #3fb950;
+            --gradient: linear-gradient(135deg, #58a6ff 0%, #a371f7 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 24px;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--text); }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.85rem;
+            color: var(--green);
+            margin-bottom: 24px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        /* Features */
+        .features {
+            padding: 60px 0;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            transition: border-color 0.2s;
+        }
+
+        .feature-card:hover { border-color: var(--accent); }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .feature-icon {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+        }
+
+        /* Steps */
+        .steps {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .steps h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            text-align: center;
+        }
+
+        .step {
+            padding: 24px;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+        }
+
+        .step h3 {
+            margin-bottom: 8px;
+        }
+
+        .step p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Requirements */
+        .requirements {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .requirements h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+        }
+
+        .req-list {
+            max-width: 600px;
+            margin: 0 auto;
+            list-style: none;
+        }
+
+        .req-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .req-list li::before {
+            content: "\2022";
+            color: var(--accent);
+            font-size: 1.4rem;
+        }
+
+        /* API Status */
+        .api-status {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">Deep-Live-Cam</div>
+            <nav class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#quickstart">Quick Start</a>
+                <a href="https://github.com/marpogiii-code/Deep-Live-Cam" target="_blank">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <span class="badge">v2.1.6 — Open Source</span>
+                <h1>Deep-Live-Cam</h1>
+                <p>Real-time face swap and video deepfake with a single click and only a single image.</p>
+                <div class="cta-buttons">
+                    <a href="https://github.com/marpogiii-code/Deep-Live-Cam" class="btn btn-primary" target="_blank">View on GitHub</a>
+                    <a href="#quickstart" class="btn btn-secondary">Get Started</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="container">
+                <h2>Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">&#x1F3AD;</div>
+                        <h3>Real-Time Face Swap</h3>
+                        <p>Swap faces in real-time using your webcam with AI-powered technology.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#x1F444;</div>
+                        <h3>Mouth Mask</h3>
+                        <p>Retain your original mouth for accurate movement using the mouth mask feature.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#x1F465;</div>
+                        <h3>Multi-Face Mapping</h3>
+                        <p>Use different faces on multiple subjects simultaneously in any scene.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#x1F3AC;</div>
+                        <h3>Video Processing</h3>
+                        <p>Process videos with face replacement powered by ONNX inference.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#x1F4F7;</div>
+                        <h3>Live Camera</h3>
+                        <p>Works with any camera feed for live streaming and video calls.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#x26A1;</div>
+                        <h3>GPU Accelerated</h3>
+                        <p>Supports NVIDIA CUDA, AMD DirectML, and Apple CoreML for maximum performance.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="steps" id="quickstart">
+            <div class="container">
+                <h2>Quick Start — 3 Steps</h2>
+                <div class="steps-grid">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Select a Face</h3>
+                        <p>Choose the source face image you want to use for swapping.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Choose Camera</h3>
+                        <p>Select which camera or video input to use for the live feed.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Press Live!</h3>
+                        <p>Click the live button and watch the real-time face swap in action.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="requirements">
+            <div class="container">
+                <h2>System Requirements</h2>
+                <ul class="req-list">
+                    <li>Python 3.10 or 3.11</li>
+                    <li>pip package manager</li>
+                    <li>git</li>
+                    <li>ffmpeg</li>
+                    <li>NVIDIA GPU (CUDA) or AMD GPU (DirectML) or Apple Silicon (CoreML)</li>
+                    <li>Visual Studio 2022 Runtimes (Windows)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="api-status">
+            <div class="container">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span id="api-status-text">Checking API status...</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Deep-Live-Cam &copy; 2024 &mdash; Open Source under GNU AGPL v3.0</p>
+            <p style="margin-top: 8px;">
+                <a href="https://github.com/marpogiii-code/Deep-Live-Cam">Source Code</a> &middot;
+                <a href="https://github.com/marpogiii-code/Deep-Live-Cam/issues">Report Issue</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        async function checkApiStatus() {
+            const el = document.getElementById('api-status-text');
+            try {
+                const res = await fetch('/api/health');
+                if (res.ok) {
+                    el.textContent = 'API is healthy';
+                } else {
+                    el.textContent = 'API returned ' + res.status;
+                }
+            } catch (e) {
+                el.textContent = 'API endpoint available at /api';
+            }
+        }
+        checkApiStatus();
+    </script>
+</body>
+</html>

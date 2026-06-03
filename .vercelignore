@@ -1,0 +1,23 @@
+# Exclude heavy ML models and media from Vercel deployment
+models/
+media/
+modules/
+tests/
+*.onnx
+*.pth
+*.mp4
+*.mkv
+*.gif
+*.bat
+venv/
+.venv/
+env/
+tf_env/
+__pycache__/
+*.pyc
+run.py
+run-cuda.bat
+run-directml.bat
+benchmark_pipeline.py
+tkinter_fix.py
+requirements.txt
