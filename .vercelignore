@@ -16,8 +16,13 @@ tf_env/
 __pycache__/
 *.pyc
 run.py
+app.py
 run-cuda.bat
 run-directml.bat
 benchmark_pipeline.py
 tkinter_fix.py
 requirements.txt
+requirements-spaces.txt
+requirements-vercel.txt
+SPACES_README.md
+pyproject.toml
